@@ -1,15 +1,15 @@
 import subprocess
 import logging
-result = subprocess.run(['ls'], capture_output=True, text=True)
-# print(result.stdout)
-# logging.basicConfig(filename='./log/main.log',level=logging.DEBUG)
-# logging.error(result.stdout)
+logging.basicConfig(filename='./log/main.log',level=logging.DEBUG)
 cmdLine="cat sample.json"
 file_path = 'sample.json'
+errCatch ="{"
+
 class JsonFile():
-    def __init__(self,file_path,cmdLine):
+    def __init__(self,file_path,cmdLine,errCatch):
         self.file_path=file_path
         self.cmdLine=cmdLine.split(" ")
+        self.errCatch = errCatch
         with open(file_path, 'r', encoding='utf-8') as f:
             self.lines = f.readlines()  # 각 줄이 리스트의 요소가 됨
     def changeFile(self):
@@ -25,4 +25,7 @@ class JsonFile():
     def cmd(self):
         result = subprocess.run(self.cmdLine, capture_output=True, text=True)
         print(result.stdout)
-JsonFile(file_path,cmdLine).changeFile()
+        if errCatch in result.stdout:
+            logging.error(result.stdout)
+
+JsonFile(file_path,cmdLine,errCatch).changeFile()
